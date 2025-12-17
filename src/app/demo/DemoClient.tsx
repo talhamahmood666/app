@@ -94,11 +94,11 @@ export default function DemoClient() {
   const [amountEth, setAmountEth] = useState("0.001");
   const [autoReleaseMins, setAutoReleaseMins] = useState("60");
 
-  const releaseTime = useMemo(() => {
-    const mins = Number(autoReleaseMins || "0");
-    const clamped = Number.isFinite(mins) ? Math.max(0, mins) : 0;
-    return nowUnix() + clamped * 60;
-  }, [autoReleaseMins]);
+  const autoReleaseSeconds = useMemo(() => {
+      const mins = Number(autoReleaseMins || "0");
+      const clamped = Number.isFinite(mins) ? Math.max(0, mins) : 0;
+      return Math.floor(clamped * 60);
+    }, [autoReleaseMins]);
 
   // Escrow ID input
   const [escrowId, setEscrowId] = useState("");
@@ -192,8 +192,8 @@ export default function DemoClient() {
       const hash = await writeContractAsync({
         address: contractAddress,
         abi: ABI as any,
-        functionName: "createEscrow(address,address,uint256)" as any,
-        args: [payee as Hex, arbiter as Hex, BigInt(releaseTime)],
+        functionName: "createEscrow",
+        args: [payee as Hex, arbiter as Hex, BigInt(autoReleaseSeconds)],
         value,
       });
       setLastTx(hash as Hex);
@@ -212,7 +212,7 @@ export default function DemoClient() {
       const hash = await writeContractAsync({
         address: contractAddress,
         abi: ABI as any,
-        functionName: "releaseEscrow(bytes32)" as any,
+        functionName: "releaseEscrow",
         args: [escrowIdHex],
       });
       setLastTx(hash as Hex);
@@ -230,7 +230,7 @@ export default function DemoClient() {
       const hash = await writeContractAsync({
         address: contractAddress,
         abi: ABI as any,
-        functionName: "refundEscrow(bytes32)" as any,
+        functionName: "refundEscrow",
         args: [escrowIdHex],
       });
       setLastTx(hash as Hex);
@@ -248,7 +248,7 @@ export default function DemoClient() {
       const hash = await writeContractAsync({
         address: contractAddress,
         abi: ABI as any,
-        functionName: "openDispute(bytes32)" as any,
+        functionName: "openDispute",
         args: [escrowIdHex],
       });
       setLastTx(hash as Hex);
