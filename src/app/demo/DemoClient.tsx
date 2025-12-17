@@ -295,7 +295,7 @@ export default function DemoClient() {
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Amount (ETH)" value={amountEth} onChange={setAmountEth} placeholder="0.001" hint="Sent as msg.value" />
-              <Field label="Auto-release (minutes from now)" value={autoReleaseMins} onChange={setAutoReleaseMins} placeholder="60" hint={`Unix time: ${releaseTime}`} />
+              <Field label="Auto-release (minutes from now)" value={autoReleaseMins} onChange={setAutoReleaseMins} placeholder="60" hint={`Seconds: `} />
             </div>
 
             <button
