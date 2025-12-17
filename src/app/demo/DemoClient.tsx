@@ -60,6 +60,7 @@ function Field(props: {
   placeholder?: string;
   hint?: string;
 }) {
+
   return (
     <label className="block">
       <div className="mb-1 text-xs text-white/70">{props.label}</div>
@@ -93,6 +94,7 @@ export default function DemoClient() {
   const [arbiter, setArbiter] = useState("");
   const [amountEth, setAmountEth] = useState("0.001");
   const [autoReleaseMins, setAutoReleaseMins] = useState("60");
+  const releaseTime = Math.floor(Date.now() / 1000) + (Number(autoReleaseMins || 0) * 60);
 
   const autoReleaseSeconds = useMemo(() => {
       const mins = Number(autoReleaseMins || "0");

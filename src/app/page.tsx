@@ -18,7 +18,7 @@ export default function Home() {
           </Link>
 
           <a
-            href="https://sepolia.basescan.org/address/0x4092898476761dA6Be8Ef2cD608Ea812D6164b3e"
+            href="https://sepolia.basescan.org/address/0xd08830035fc062b67bCD5a5d12B270B5D8E09d6f"
             target="_blank"
             rel="noreferrer"
             className="rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-medium text-white hover:bg-white/10"
