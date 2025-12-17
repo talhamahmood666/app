@@ -98,7 +98,20 @@ export default function DemoClient() {
 
   // Create escrow form
   const [payee, setPayee] = useState("");
-  const [arbiter, setArbiter] = useState("");
+  
+  const [runtimeError, setRuntimeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const onErr = (e: any) => setRuntimeError(String(e?.message || e?.error?.message || e));
+    const onRej = (e: any) => setRuntimeError(String(e?.reason?.message || e?.reason || e));
+    window.addEventListener("error", onErr);
+    window.addEventListener("unhandledrejection", onRej);
+    return () => {
+      window.removeEventListener("error", onErr);
+      window.removeEventListener("unhandledrejection", onRej);
+    };
+  }, []);
+const [arbiter, setArbiter] = useState("");
   const [amountEth, setAmountEth] = useState("0.001");
   const [autoReleaseMins, setAutoReleaseMins] = useState("60");
   const releaseTime = Math.floor(Date.now() / 1000) + (Number(autoReleaseMins || 0) * 60);
