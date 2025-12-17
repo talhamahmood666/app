@@ -161,10 +161,31 @@ export default function DemoClient() {
   const canDispute =
     !isFinal &&
     isFunded &&
-    (isPayer || isPayee);
-  // --- end gating ---
+    (isPayer || isPayee);  // --- end gating ---
 const escrowExists = useMemo(() => {
     if (!escrow) return false;
+  // DEBUG (safe): logs UI gating facts to console
+  useEffect(() => {
+    // avoid spamming when nothing loaded
+    if (!address) return;
+    console.log("[BulwarkX DEBUG]", {
+      address,
+      payer: (escrow as any)?.payer,
+      payee: (escrow as any)?.payee,
+      arbiter: (escrow as any)?.arbiter,
+      status: (escrow as any)?.status?.toString?.(),
+      escrowExists,
+      isPayer,
+      isPayee,
+      isArbiter,
+      canRelease,
+      canRefund,
+      canDispute,
+      pending
+    });
+  }, [address, escrow, escrowExists, isPayer, isPayee, isArbiter, canRelease, canRefund, canDispute, pending]);
+
+
     const vals = Array.isArray(escrow) ? escrow : Object.values(escrow);
     const addrLike = vals.find((v) => typeof v === "string" && v.startsWith("0x") && v.length === 42);
     return Boolean(addrLike && addrLike !== "0x0000000000000000000000000000000000000000");
@@ -456,6 +477,31 @@ const escrowExists = useMemo(() => {
             >
               Open Dispute
             </button>
+
+            
+            {/* DEBUG – remove after fix */}
+            <div className="mt-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-3 text-[11px] text-yellow-200">
+              <pre>
+{JSON.stringify({
+  address,
+  payer: escrow?.payer,
+  payee: escrow?.payee,
+  arbiter: escrow?.arbiter,
+  status: escrow?.status?.toString?.(),
+  escrowExists,
+  isPayer,
+  isPayee,
+  isArbiter,
+  canRelease,
+  canRefund,
+  canDispute,
+  pending
+}, null, 2)}
+
+
+              </pre>
+            </div>
+
 
             {/* Escrow State Panel */}
             <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
