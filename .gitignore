@@ -14,3 +14,7 @@ dist
 # Local diagnostics bundles (do not commit)
 bulwarkx_app_diagnostics_*/
 bulwarkx_app_diagnostics_*.tar.gz
+
+# Local diagnostics bundles (do not commit)
+bulwarkx_app_diagnostics_*/
+bulwarkx_app_diagnostics_*.tar.gz
