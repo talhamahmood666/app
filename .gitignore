@@ -10,3 +10,7 @@ yarn-error.log*
 pnpm-debug.log*
 dist
 .DS_Store
+
+# Local diagnostics bundles (do not commit)
+bulwarkx_app_diagnostics_*/
+bulwarkx_app_diagnostics_*.tar.gz
