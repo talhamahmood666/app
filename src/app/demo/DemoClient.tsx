@@ -193,7 +193,7 @@ export default function DemoClient() {
         address: contractAddress,
         abi: ABI as any,
         functionName: "createEscrow",
-        args: [payee as Hex, arbiter as Hex, BigInt(autoReleaseSeconds)],
+        args: [payee as Hex, arbiter as Hex, value],
         value,
       });
       setLastTx(hash as Hex);
