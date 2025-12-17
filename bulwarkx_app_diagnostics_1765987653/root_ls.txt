@@ -1,0 +1,26 @@
+total 592
+drwxrwxrwx+   9 codespace root        4096 Dec 17 16:07 .
+drwxr-xrwx+   5 codespace root        4096 Dec 17 14:06 ..
+-rw-rw-rw-    1 codespace root         141 Dec 17 14:06 .env.example
+-rw-rw-rw-    1 codespace codespace    155 Dec 17 14:23 .env.local
+drwxrwxrwx+   8 codespace root        4096 Dec 17 16:05 .git
+-rw-rw-rw-    1 codespace root         169 Dec 17 14:06 .gitignore
+drwxrwxrwx+   6 codespace codespace   4096 Dec 17 16:05 .next
+-rw-rw-rw-    1 codespace root          37 Dec 17 14:26 .npmrc
+-rw-rw-rw-    1 codespace codespace     55 Dec 17 14:08 .npmrc.bak.1765980480
+-rw-rw-rw-    1 codespace root           3 Dec 17 14:07 .nvmrc
+-rw-rw-rw-    1 codespace root           5 Dec 17 14:06 README.md
+drwxrwxrwx+   2 codespace codespace   4096 Dec 17 16:05 bulwarkx_app_diagnostics_1765987507
+-rw-rw-rw-    1 codespace codespace   6802 Dec 17 16:05 bulwarkx_app_diagnostics_1765987507.tar.gz
+drwxrwxrwx+   2 codespace codespace   4096 Dec 17 16:07 bulwarkx_app_diagnostics_1765987653
+-rw-rw-rw-    1 codespace root          73 Dec 17 14:06 eslint.config.mjs
+-rw-rw-rw-    1 codespace root         262 Dec 17 14:13 next-env.d.ts
+-rw-rw-rw-    1 codespace root         322 Dec 17 14:43 next.config.mjs
+drwxrwxrwx+ 530 codespace codespace  20480 Dec 17 14:47 node_modules
+-rw-rw-rw-    1 codespace codespace 486889 Dec 17 14:47 package-lock.json
+-rw-rw-rw-    1 codespace root         800 Dec 17 14:43 package.json
+-rw-rw-rw-    1 codespace root          81 Dec 17 14:06 postcss.config.mjs
+drwxrwxrwx+   2 codespace root        4096 Dec 17 14:06 public
+drwxrwxrwx+   4 codespace root        4096 Dec 17 14:06 src
+-rw-rw-rw-    1 codespace root         295 Dec 17 14:06 tailwind.config.ts
+-rw-rw-rw-    1 codespace root         706 Dec 17 14:13 tsconfig.json

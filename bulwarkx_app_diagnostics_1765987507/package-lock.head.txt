@@ -1,0 +1,200 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "app",
+      "version": "0.1.0",
+      "dependencies": {
+        "@rainbow-me/rainbowkit": "^2.2.3",
+        "@tanstack/react-query": "^5.62.10",
+        "next": "^15.0.4",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "viem": "^2.21.9",
+        "wagmi": "^2.13.1"
+      },
+      "devDependencies": {
+        "@types/node": "^22.9.0",
+        "@types/react": "^18.3.12",
+        "@types/react-dom": "^18.3.1",
+        "autoprefixer": "^10.4.20",
+        "eslint": "^9.13.0",
+        "eslint-config-next": "^15.0.4",
+        "pino-pretty": "^13.1.3",
+        "postcss": "^8.4.47",
+        "tailwindcss": "^3.4.14",
+        "typescript": "^5.6.3"
+      },
+      "engines": {
+        "node": "20.x"
+      }
+    },
+    "node_modules/@adraffy/ens-normalize": {
+      "version": "1.11.1",
+      "resolved": "https://registry.npmjs.org/@adraffy/ens-normalize/-/ens-normalize-1.11.1.tgz",
+      "integrity": "sha512-nhCBV3quEgesuf7c7KYfperqSS14T8bYuvJ8PcLJp6znkZpFc0AuW4qBtr8eKVyPPe/8RSr7sglCWPU5eaxwKQ==",
+      "license": "MIT"
+    },
+    "node_modules/@alloc/quick-lru": {
+      "version": "5.2.0",
+      "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz",
+      "integrity": "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/@babel/runtime": {
+      "version": "7.28.4",
+      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.28.4.tgz",
+      "integrity": "sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=6.9.0"
+      }
+    },
+    "node_modules/@base-org/account": {
+      "version": "2.4.0",
+      "resolved": "https://registry.npmjs.org/@base-org/account/-/account-2.4.0.tgz",
+      "integrity": "sha512-A4Umpi8B9/pqR78D1Yoze4xHyQaujioVRqqO3d6xuDFw9VRtjg6tK3bPlwE0aW+nVH/ntllCpPa2PbI8Rnjcug==",
+      "license": "Apache-2.0",
+      "dependencies": {
+        "@coinbase/cdp-sdk": "^1.0.0",
+        "@noble/hashes": "1.4.0",
+        "clsx": "1.2.1",
+        "eventemitter3": "5.0.1",
+        "idb-keyval": "6.2.1",
+        "ox": "0.6.9",
+        "preact": "10.24.2",
+        "viem": "^2.31.7",
+        "zustand": "5.0.3"
+      }
+    },
+    "node_modules/@base-org/account/node_modules/@noble/hashes": {
+      "version": "1.4.0",
+      "resolved": "https://registry.npmjs.org/@noble/hashes/-/hashes-1.4.0.tgz",
+      "integrity": "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 16"
+      },
+      "funding": {
+        "url": "https://paulmillr.com/funding/"
+      }
+    },
+    "node_modules/@base-org/account/node_modules/clsx": {
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/clsx/-/clsx-1.2.1.tgz",
+      "integrity": "sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=6"
+      }
+    },
+    "node_modules/@base-org/account/node_modules/ox": {
+      "version": "0.6.9",
+      "resolved": "https://registry.npmjs.org/ox/-/ox-0.6.9.tgz",
+      "integrity": "sha512-wi5ShvzE4eOcTwQVsIPdFr+8ycyX+5le/96iAJutaZAvCes1J0+RvpEPg5QDPDiaR0XQQAvZVl7AwqQcINuUug==",
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/wevm"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "@adraffy/ens-normalize": "^1.10.1",
+        "@noble/curves": "^1.6.0",
+        "@noble/hashes": "^1.5.0",
+        "@scure/bip32": "^1.5.0",
+        "@scure/bip39": "^1.4.0",
+        "abitype": "^1.0.6",
+        "eventemitter3": "5.0.1"
+      },
+      "peerDependencies": {
+        "typescript": ">=5.4.0"
+      },
+      "peerDependenciesMeta": {
+        "typescript": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/@base-org/account/node_modules/ox/node_modules/@noble/hashes": {
+      "version": "1.8.0",
+      "resolved": "https://registry.npmjs.org/@noble/hashes/-/hashes-1.8.0.tgz",
+      "integrity": "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==",
+      "license": "MIT",
+      "engines": {
+        "node": "^14.21.3 || >=16"
+      },
+      "funding": {
+        "url": "https://paulmillr.com/funding/"
+      }
+    },
+    "node_modules/@coinbase/cdp-sdk": {
+      "version": "1.40.1",
+      "resolved": "https://registry.npmjs.org/@coinbase/cdp-sdk/-/cdp-sdk-1.40.1.tgz",
+      "integrity": "sha512-VZxAUYvWbqM4gw/ZHyr9fKBlCAKdMbBQzJxpV9rMUNkdulHIrj0cko2Mw3dyVyw+gdT62jAVxzVkPuQTRnECLw==",
+      "license": "MIT",
+      "dependencies": {
+        "@solana-program/system": "^0.8.0",
+        "@solana-program/token": "^0.6.0",
+        "@solana/kit": "^3.0.3",
+        "@solana/web3.js": "^1.98.1",
+        "abitype": "1.0.6",
+        "axios": "^1.12.2",
+        "axios-retry": "^4.5.0",
+        "jose": "^6.0.8",
+        "md5": "^2.3.0",
+        "uncrypto": "^0.1.3",
+        "viem": "^2.21.26",
+        "zod": "^3.24.4"
+      }
+    },
+    "node_modules/@coinbase/cdp-sdk/node_modules/abitype": {
+      "version": "1.0.6",
+      "resolved": "https://registry.npmjs.org/abitype/-/abitype-1.0.6.tgz",
+      "integrity": "sha512-MMSqYh4+C/aVqI2RQaWqbvI4Kxo5cQV40WQ4QFtDnNzCkqChm8MuENhElmynZlO0qUy/ObkEUaXtKqYnx1Kp3A==",
+      "license": "MIT",
+      "funding": {
+        "url": "https://github.com/sponsors/wevm"
+      },
+      "peerDependencies": {
+        "typescript": ">=5.0.4",
+        "zod": "^3 >=3.22.0"
+      },
+      "peerDependenciesMeta": {
+        "typescript": {
+          "optional": true
+        },
+        "zod": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/@coinbase/wallet-sdk": {
+      "version": "4.3.6",
+      "resolved": "https://registry.npmjs.org/@coinbase/wallet-sdk/-/wallet-sdk-4.3.6.tgz",
+      "integrity": "sha512-4q8BNG1ViL4mSAAvPAtpwlOs1gpC+67eQtgIwNvT3xyeyFFd+guwkc8bcX5rTmQhXpqnhzC4f0obACbP9CqMSA==",
+      "license": "Apache-2.0",
+      "dependencies": {
+        "@noble/hashes": "1.4.0",
+        "clsx": "1.2.1",
+        "eventemitter3": "5.0.1",
+        "idb-keyval": "6.2.1",
+        "ox": "0.6.9",
+        "preact": "10.24.2",
+        "viem": "^2.27.2",
+        "zustand": "5.0.3"
+      }
+    },
+    "node_modules/@coinbase/wallet-sdk/node_modules/@noble/hashes": {
+      "version": "1.4.0",
