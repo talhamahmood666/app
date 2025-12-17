@@ -3,10 +3,20 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { parseEther, isAddress, decodeEventLog } from "viem";
+import { parseEther, isAddress, decodeEventLog, getAddress } from "viem";
 
 import ABI from "../../contracts/BulwarkXEscrow.abi.json";
 import { ESCROW_ADDRESSES } from "../../contracts/addresses";
+
+function sameAddr(a?: string, b?: string) {
+  if (!a || !b) return false;
+  try {
+    return getAddress(a) === getAddress(b);
+  } catch {
+    return a.toLowerCase() === b.toLowerCase();
+  }
+}
+
 
 type Hex = `0x${string}`;
 
@@ -60,7 +70,6 @@ function Field(props: {
   placeholder?: string;
   hint?: string;
 }) {
-
   return (
     <label className="block">
       <div className="mb-1 text-xs text-white/70">{props.label}</div>
@@ -85,9 +94,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default function DemoClient() {
-  const { address, isConnected } = useAccount();
-
-  const contractAddress = ESCROW_ADDRESSES.baseSepolia as Hex;
+  const { address, isConnected } = useAccount();const contractAddress = ESCROW_ADDRESSES.baseSepolia as Hex;
 
   // Create escrow form
   const [payee, setPayee] = useState("");
@@ -117,7 +124,46 @@ export default function DemoClient() {
 
   const escrow = escrowRead.data as any;
 
-  const escrowExists = useMemo(() => {
+  
+
+  
+
+  
+  // --- BulwarkX action gating (roles + status) ---
+  const userAddr = address as string | undefined;
+
+  const st = Number((escrow as any)?.status ?? -1);
+
+  const isFunded = st === 0;
+  const isDisputed = st === 1;
+  const isReleased = st === 2;
+  const isRefunded = st === 3;
+  const isFinal = isReleased || isRefunded;
+
+  const payerAddr = (escrow as any)?.payer as string | undefined;
+  const payeeAddr = (escrow as any)?.payee as string | undefined;
+  const arbiterAddr = (escrow as any)?.arbiter as string | undefined;
+
+  const isPayer = sameAddr(userAddr, payerAddr);
+  const isPayee = sameAddr(userAddr, payeeAddr);
+  const isArbiter = sameAddr(userAddr, arbiterAddr);
+
+  // Allow arbiter to resolve disputes. (Funded = payer can release. Disputed = arbiter can release/refund.)
+  const canRelease =
+    !isFinal &&
+    ((isFunded && isPayer) || (isDisputed && isArbiter));
+
+  const canRefund =
+    !isFinal &&
+    (isDisputed && isArbiter);
+
+  // Optional: who can open disputes (tweak if contract differs)
+  const canDispute =
+    !isFinal &&
+    isFunded &&
+    (isPayer || isPayee);
+  // --- end gating ---
+const escrowExists = useMemo(() => {
     if (!escrow) return false;
     const vals = Array.isArray(escrow) ? escrow : Object.values(escrow);
     const addrLike = vals.find((v) => typeof v === "string" && v.startsWith("0x") && v.length === 42);
@@ -305,7 +351,9 @@ export default function DemoClient() {
               disabled={!isConnected || pending}
               className={cx(
                 "mt-2 w-full rounded-xl px-4 py-3 text-sm font-medium transition",
-                !isConnected || pending ? "cursor-not-allowed bg-white/10 text-white/40" : "bg-white text-black hover:bg-white/90"
+                !isConnected || pending
+                  ? "cursor-not-allowed bg-white/10 text-white/40"
+                  : "bg-white text-black hover:bg-white/90"
               )}
             >
               {pending ? "Working…" : "Create Escrow"}
@@ -359,41 +407,51 @@ export default function DemoClient() {
                 disabled={!escrowIdLooksValid || escrowRead.isFetching}
                 className={cx(
                   "rounded-xl px-4 py-3 text-sm font-medium transition",
-                  !escrowIdLooksValid || escrowRead.isFetching ? "cursor-not-allowed bg-white/10 text-white/40" : "bg-white/10 text-white hover:bg-white/15"
+                  !escrowIdLooksValid || escrowRead.isFetching
+                    ? "cursor-not-allowed bg-white/10 text-white/40"
+                    : "bg-white/10 text-white hover:bg-white/15"
                 )}
               >
                 {escrowRead.isFetching ? "Loading…" : "Load Escrow"}
               </button>
 
+                
               <button
                 onClick={handleRelease}
-                disabled={!canAct || pending}
+                disabled={!canRelease || pending}
                 className={cx(
                   "rounded-xl px-4 py-3 text-sm font-medium transition",
-                  !canAct || pending ? "cursor-not-allowed bg-white/10 text-white/40" : "bg-white text-black hover:bg-white/90"
+                  !canRelease || pending
+                    ? "cursor-not-allowed bg-white/10 text-white/40"
+                    : "bg-white text-black hover:bg-white/90"
                 )}
               >
-                Release
+                {isDisputed ? "Resolve Dispute · Release" : "Release"}
               </button>
 
               <button
                 onClick={handleRefund}
-                disabled={!canAct || pending}
+                disabled={!canRefund || pending}
                 className={cx(
                   "rounded-xl px-4 py-3 text-sm font-medium transition",
-                  !canAct || pending ? "cursor-not-allowed bg-white/10 text-white/40" : "bg-white/10 text-white hover:bg-white/15"
+                  !canRefund || pending
+                    ? "cursor-not-allowed bg-white/10 text-white/40"
+                    : "bg-white text-black hover:bg-white/90"
                 )}
               >
-                Refund
+                {isDisputed ? "Resolve Dispute · Refund" : "Refund"}
               </button>
+
             </div>
 
             <button
               onClick={handleDispute}
-              disabled={!canAct || pending}
+              disabled={!canDispute || pending}
               className={cx(
                 "rounded-xl px-4 py-3 text-sm font-medium transition",
-                !canAct || pending ? "cursor-not-allowed bg-white/10 text-white/40" : "bg-white/10 text-white hover:bg-white/15"
+                !canDispute || pending
+                  ? "cursor-not-allowed bg-white/10 text-white/40"
+                  : "bg-white/10 text-white hover:bg-white/15"
               )}
             >
               Open Dispute
