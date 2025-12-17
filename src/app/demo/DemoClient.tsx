@@ -111,8 +111,9 @@ export default function DemoClient() {
 
   // Escrow ID input
   const [escrowId, setEscrowId] = useState("");
-  const escrowIdHex = (escrowId || "").trim() as Hex;
-  const escrowIdLooksValid = escrowIdHex.startsWith("0x") && escrowIdHex.length === 66;
+  
+  const escrowIdHex = (escrowId || "").trim();
+  const escrowIdLooksValid = /^0x[0-9a-fA-F]{64}$/.test(escrowIdHex);
 
   const escrowRead = useReadContract({
     address: contractAddress,
@@ -417,7 +418,11 @@ const escrowExists = useMemo(() => {
             <Field
               label="Escrow ID (bytes32)"
               value={escrowId}
-              onChange={setEscrowId}
+              onChange={(v) => {
+                const t = (v || "").trim();
+                const hex = t.startsWith("0x") ? t : (t.length ? ("0x" + t) : "");
+                setEscrowId(hex);
+              }}
               placeholder="0x… (66 chars)"
               hint="Auto-fills if decoded from tx logs; otherwise copy from BaseScan logs."
             />
