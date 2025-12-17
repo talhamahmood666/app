@@ -418,9 +418,13 @@ const escrowExists = useMemo(() => {
             <Field
               label="Escrow ID (bytes32)"
               value={escrowId}
-              onChange={(v) => {
-                const t = (v || "").trim();
-                const hex = t.startsWith("0x") ? t : (t.length ? ("0x" + t) : "");
+              onChange={(v: any) => {
+                const raw =
+                  typeof v === "string"
+                    ? v
+                    : (v?.target?.value ?? v?.currentTarget?.value ?? "");
+                const t = String(raw || "").trim();
+                const hex = t.startsWith("0x") ? t : (t.length ? "0x" + t : "");
                 setEscrowId(hex);
               }}
               placeholder="0x… (66 chars)"
