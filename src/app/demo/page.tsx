@@ -1,3 +1,4 @@
+import { ClientErrorTrap } from "./ClientErrorTrap";
 import DemoClient from "./DemoClient";
 
 export default function DemoPage() {
