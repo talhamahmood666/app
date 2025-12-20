@@ -94,7 +94,8 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default function DemoClient() {
-  const { address, isConnected } = useAccount();const contractAddress = ESCROW_ADDRESSES.baseSepolia as Hex;
+    const FEATURE_DISPUTES = false;
+const { address, isConnected } = useAccount();const contractAddress = ESCROW_ADDRESSES.baseSepolia as Hex;
 
   // Create escrow form
   const [payee, setPayee] = useState("");
@@ -123,41 +124,19 @@ const [arbiter, setArbiter] = useState("");
     }, [autoReleaseMins]);
 
   // Escrow ID input
-  // Escrow ID input (safe)
-  const [escrowIdInput, setEscrowIdInput] = useState("");
-  const [escrowIdHex, setEscrowIdHex] = useState<Hex | null>(null);
-  const [escrowIdError, setEscrowIdError] = useState<string | null>(null);
+  const [escrowId, setEscrowId] = useState("");
+  
+  const escrowIdHex = (escrowId || "").trim();
+  const escrowIdLooksValid = /^0x[0-9a-fA-F]{64}$/.test(escrowIdHex);
 
-  function handleEscrowIdString(raw: string) {
-    setEscrowIdInput(raw);
-
-    const trimmed = (raw || "").trim();
-    if (!trimmed) {
-      setEscrowIdHex(null);
-      setEscrowIdError(null);
-      return;
-    }
-
-    const withPrefix = trimmed.startsWith("0x") ? trimmed : `0x${trimmed}`;
-    const ok = /^0x[0-9a-fA-F]{64}$/.test(withPrefix);
-
-    if (!ok) {
-      setEscrowIdHex(null);
-      setEscrowIdError("Escrow ID must be a valid bytes32 value");
-      return;
-    }
-
-    setEscrowIdHex(withPrefix as Hex);
-    setEscrowIdError(null);
-  }
-
-const escrowRead = useReadContract({
+  
+  const escrowRead = useReadContract({
     address: contractAddress,
     abi: ABI as any,
     functionName: "escrows",
-        args: escrowIdHex ? [escrowIdHex] : undefined,
-    query: { enabled: Boolean(escrowIdHex), refetchInterval: 4000 },
-      });
+    args: escrowIdLooksValid ? [escrowIdHex] : undefined,
+    query: { enabled: escrowIdLooksValid, refetchInterval: 4000 },
+  });
 
   const escrow = escrowRead.data as any;
 
@@ -239,7 +218,7 @@ const escrowExists = useMemo(() => {
   // Try to auto-detect escrowId from logs
   useEffect(() => {
     if (!receipt.data || !receipt.isSuccess) return;
-    if (Boolean(escrowIdHex)) return;
+    if (escrowIdLooksValid) return;
 
     try {
       const logs = receipt.data.logs || [];
@@ -255,7 +234,7 @@ const escrowExists = useMemo(() => {
             for (const key of Object.keys(args)) {
               const v = args[key];
               if (typeof v === "string" && v.startsWith("0x") && v.length === 66) {
-                handleEscrowIdString(v);
+                setEscrowId(v);
                 setStatusMsg("Escrow ID detected from tx log ✅");
                 return;
               }
@@ -364,7 +343,7 @@ const escrowExists = useMemo(() => {
     }
   }
 
-  const canAct = isConnected && Boolean(escrowIdHex);
+  const canAct = isConnected && escrowIdLooksValid;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -404,6 +383,126 @@ const escrowExists = useMemo(() => {
               <Field label="Auto-release (minutes from now)" value={autoReleaseMins} onChange={setAutoReleaseMins} placeholder="60" hint={`Seconds: `} />
             </div>
 
+            <button
+              onClick={handleCreateEscrow}
+              disabled={!isConnected || pending}
+              className={cx(
+                "mt-2 w-full rounded-xl px-4 py-3 text-sm font-medium transition",
+                !isConnected || pending
+                  ? "cursor-not-allowed bg-white/10 text-white/40"
+                  : "bg-white text-black hover:bg-white/90"
+              )}
+            >
+              {pending ? "Working…" : "Create Escrow"}
+            </button>
+
+            <div className="mt-3 rounded-xl border border-white/10 bg-black/40 p-3 text-xs text-white/70">
+              <div className="flex flex-col gap-2">
+                <Row label="Connected" value={isConnected ? "Yes" : "No"} />
+                <Row label="Wallet" value={address ? shortAddr(address) : "—"} />
+                <Row
+                  label="Last tx"
+                  value={
+                    lastTx ? (
+                      <a className="underline underline-offset-4 hover:text-white" href={linkTx(lastTx) || "#"} target="_blank" rel="noreferrer">
+                        {shortAddr(lastTx)}
+                      </a>
+                    ) : (
+                      "—"
+                    )
+                  }
+                />
+                <Row label="Receipt" value={receipt.isSuccess ? "Confirmed ✅" : receipt.isError ? "Failed ❌" : lastTx ? "Pending…" : "—"} />
+              </div>
+
+              {(statusMsg || errorMsg) && (
+                <div className="mt-3 space-y-2">
+                  {statusMsg && <div className="rounded-lg border border-white/10 bg-white/5 p-2 text-white/80">{statusMsg}</div>}
+                  {errorMsg && <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-2 text-red-200">{errorMsg}</div>}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Manage */}
+        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg">
+          <h2 className="text-lg font-medium">2) Manage escrow</h2>
+
+          <div className="mt-4 grid gap-4">
+            <Field
+              label="Escrow ID (bytes32)"
+              value={escrowId}
+              onChange={(v: any) => {
+                const raw =
+                  typeof v === "string"
+                    ? v
+                    : (v?.target?.value ?? v?.currentTarget?.value ?? "");
+                const t = String(raw || "").trim();
+                const hex = t.startsWith("0x") ? t : (t.length ? "0x" + t : "");
+                setEscrowId(hex);
+              }}
+              placeholder="0x… (66 chars)"
+              hint="Auto-fills if decoded from tx logs; otherwise copy from BaseScan logs."
+            />
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <button
+                onClick={() => escrowRead.refetch()}
+                disabled={!escrowIdLooksValid || escrowRead.isFetching}
+                className={cx(
+                  "rounded-xl px-4 py-3 text-sm font-medium transition",
+                  !escrowIdLooksValid || escrowRead.isFetching
+                    ? "cursor-not-allowed bg-white/10 text-white/40"
+                    : "bg-white/10 text-white hover:bg-white/15"
+                )}
+              >
+                {escrowRead.isFetching ? "Loading…" : "Load Escrow"}
+              </button>
+
+                
+              <button
+                onClick={handleRelease}
+                disabled={!canRelease || pending}
+                className={cx(
+                  "rounded-xl px-4 py-3 text-sm font-medium transition",
+                  !canRelease || pending
+                    ? "cursor-not-allowed bg-white/10 text-white/40"
+                    : "bg-white text-black hover:bg-white/90"
+                )}
+              >
+                {isDisputed ? "Resolve Dispute · Release" : "Release"}
+              </button>
+
+              <button
+                onClick={handleRefund}
+                disabled={!canRefund || pending}
+                className={cx(
+                  "rounded-xl px-4 py-3 text-sm font-medium transition",
+                  !canRefund || pending
+                    ? "cursor-not-allowed bg-white/10 text-white/40"
+                    : "bg-white text-black hover:bg-white/90"
+                )}
+              >
+                {isDisputed ? "Resolve Dispute · Refund" : "Refund"}
+              </button>
+
+            </div>
+
+            {FEATURE_DISPUTES && (<button
+              onClick={handleDispute}
+              disabled={!canDispute || pending}
+              className={cx(
+                "rounded-xl px-4 py-3 text-sm font-medium transition",
+                !canDispute || pending
+                  ? "cursor-not-allowed bg-white/10 text-white/40"
+                  : "bg-white/10 text-white hover:bg-white/15"
+              )}
+            >
+              Open Dispute
+            </button>)}
+
+            
             {/* DEBUG – remove after fix */}
             <div className="mt-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-3 text-[11px] text-yellow-200">
               <pre>
@@ -436,19 +535,19 @@ const escrowExists = useMemo(() => {
               </div>
 
               <div className="mt-3 space-y-2 text-xs text-white/75">
-                {!Boolean(escrowIdHex) && (
+                {!escrowIdLooksValid && (
                   <div className="rounded-lg border border-white/10 bg-white/5 p-2">
                     Enter a valid <span className="font-semibold">bytes32</span> escrow ID to load state.
                   </div>
                 )}
 
-                {Boolean(escrowIdHex) && escrowRead.isError && (
+                {escrowIdLooksValid && escrowRead.isError && (
                   <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-2 text-red-200">
                     {prettyError(escrowRead.error)}
                   </div>
                 )}
 
-                {Boolean(escrowIdHex) && Boolean(escrowRead.data) && (
+                {escrowIdLooksValid && Boolean(escrowRead.data) && (
                   <div className="grid gap-2">
                     <Row label="Exists" value={escrowExists ? "Yes ✅" : "Unknown / empty"} />
                     <div className="rounded-lg border border-white/10 bg-white/5 p-3">
@@ -460,7 +559,7 @@ const escrowExists = useMemo(() => {
                   </div>
                 )}
 
-                {Boolean(escrowIdHex) && !escrowRead.isFetching && !escrowRead.data && !escrowRead.isError && (
+                {escrowIdLooksValid && !escrowRead.isFetching && !escrowRead.data && !escrowRead.isError && (
                   <div className="rounded-lg border border-white/10 bg-white/5 p-2">
                     No data loaded yet. Click <span className="font-semibold">Load Escrow</span>.
                   </div>
@@ -478,7 +577,7 @@ const escrowExists = useMemo(() => {
                   Last Tx
                 </a>
               )}
-              {Boolean(escrowIdHex) && (
+              {escrowIdLooksValid && (
                 <a
                   className="underline underline-offset-4 hover:text-white"
                   href={`${explorerBase()}/search?f=0&q=${escrowIdHex}`}
